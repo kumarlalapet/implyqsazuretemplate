@@ -1,0 +1,6 @@
+{
+    "itemDisplayName": "Imply with MySQL and Blob Store",
+    "description": "This template creates an VM with MySQL and Blob Store",
+    "githubUsername": "Imply",
+    "summary": "Creates a Virtual Machine with a MySQL instance and Blob Store as an environment in a DevTest Lab."
+  }
