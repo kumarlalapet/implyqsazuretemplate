@@ -3,8 +3,8 @@
     "contentVersion": "1.0.0.0",
     "parameters": {
         "vnetAddressPrefix": {
-            "type": "string",
-            "defaultValue": "10.0.0.0/16",
+            "type": "array",
+            "defaultValue": "[10.0.0.0/16]",
             "metadata": {
               "description": "Address prefix for the virtual network"
             }
