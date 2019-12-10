@@ -63,7 +63,6 @@
         "subnetRef": "[concat(variables('vnetId'), '/subnets/', variables('subnetName'))]",
 
         "serverName": "[toLower(concat(variables('resourceNamePrefix'), '-', take(uniqueString(resourceGroup().id), 6), '-db'))]",
-        "databaseName": "[concat('db', uniqueString(resourceGroup().id, variables('siteName')))]",
         "databaseVersion": "5.7",
         "databaseDTU": 2,
         "databaseSkuName": "B_Gen5_2",
@@ -248,7 +247,8 @@
                         "ignoreMissingVnetServiceEndpoint": true
                     },
                     "dependsOn": [
-                        "[concat('Microsoft.DBforMySQL/servers/', variables('serverName'))]"
+                        "[concat('Microsoft.DBforMySQL/servers/', variables('serverName'))]",
+                        "[concat('Microsoft.Network/virtualNetworks/', variables('virtualNetworkName'))]"                        
                     ]
                 }                
             ]
