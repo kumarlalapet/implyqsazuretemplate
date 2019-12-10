@@ -46,16 +46,16 @@
         "location": "westus2",
         "enableDdosProtection":"false",
         "resourceNamePrefix": "[take(uniqueString(resourceGroup().id), 3)]",
-        "networkInterfaceName":"[toLower(concat(variables('resourceNamePrefix'), '-', take(uniqueString(resourceGroup().id), 6), '-networkInterfaceName'))]",
-        "networkSecurityGroupName":"[toLower(concat(variables('resourceNamePrefix'), '-', take(uniqueString(resourceGroup().id), 6), '-networkSecurityGroupName'))]",
-        "networkSecurityGroupRules":"[toLower(concat(variables('resourceNamePrefix'), '-', take(uniqueString(resourceGroup().id), 6), '-networkSecurityGroupRules'))]",
+        "networkInterfaceName":"[toLower(concat(variables('resourceNamePrefix'), '-', take(uniqueString(resourceGroup().id), 6), '-nwinterface'))]",
+        "networkSecurityGroupName":"[toLower(concat(variables('resourceNamePrefix'), '-', take(uniqueString(resourceGroup().id), 6), '-nsg'))]",
+        "networkSecurityGroupRules":"[toLower(concat(variables('resourceNamePrefix'), '-', take(uniqueString(resourceGroup().id), 6), '-nsgrules'))]",
         "subnetName":"mysubnet",
-        "virtualNetworkName":"[toLower(concat(variables('resourceNamePrefix'), '-', take(uniqueString(resourceGroup().id), 6), '-virtualNetworkName'))]",
-        "publicIpAddressName":"[toLower(concat(variables('resourceNamePrefix'), '-', take(uniqueString(resourceGroup().id), 6), '-publicIpAddressName'))]",
+        "virtualNetworkName":"[toLower(concat(variables('resourceNamePrefix'), '-', take(uniqueString(resourceGroup().id), 6), '-vnet'))]",
+        "publicIpAddressName":"[toLower(concat(variables('resourceNamePrefix'), '-', take(uniqueString(resourceGroup().id), 6), '-pubip'))]",
         "publicIpAddressType":"Dynamic",
         "publicIpAddressSku":"Basic",
-        "virtualMachineName":"[toLower(concat(variables('resourceNamePrefix'), '-', take(uniqueString(resourceGroup().id), 6), '-virtualMachineName'))]",
-        "virtualMachineRG":"[toLower(concat(variables('resourceNamePrefix'), '-', take(uniqueString(resourceGroup().id), 6), '-virtualMachineRG'))]",
+        "virtualMachineName":"[toLower(concat(variables('resourceNamePrefix'), '-', take(uniqueString(resourceGroup().id), 6), '-vm'))]",
+        "virtualMachineRG":"[toLower(concat(variables('resourceNamePrefix'), '-', take(uniqueString(resourceGroup().id), 6), '-vmrg'))]",
         "virtualMachineSize":"Standard_D2s_v3",
         "osDiskType":"StandardSSD_LRS",
         "nsgId": "[resourceId(resourceGroup().name, 'Microsoft.Network/networkSecurityGroups', variables('networkSecurityGroupName'))]",
@@ -69,7 +69,12 @@
         "databaseSkuSizeMB": 51200,
         "databaseSkuTier": "GeneralPurpose",
         "databaseSkuFamily": "Gen5",
-        "virtualNetworkRuleName": "AllowSubnet"
+        "virtualNetworkRuleName": "AllowSubnet",
+
+        "storageAccountName":"[toLower(concat(variables('resourceNamePrefix'), '-', take(uniqueString(resourceGroup().id), 6), '-sgaccount'))]",
+        "segContainerName":"segmentcontainer",
+        "logsContainerName":"logscontainer"
+
 
     },
     "resources": [
@@ -249,6 +254,40 @@
                     "dependsOn": [
                         "[concat('Microsoft.DBforMySQL/servers/', variables('serverName'))]",
                         "[concat('Microsoft.Network/virtualNetworks/', variables('virtualNetworkName'))]"                        
+                    ]
+                }                
+            ]
+        },
+
+
+        {
+            "name": "[variables('storageAccountName')]",
+            "type": "Microsoft.Storage/storageAccounts",
+            "apiVersion": "2018-07-01",
+            "location": "[parameters('location')]",
+            "kind": "StorageV2",
+            "sku": {
+                "name": "Standard_LRS",
+                "tier": "Standard"
+            },
+            "properties": {
+                "accessTier": "Hot"
+            },
+            "resources": [
+                {
+                    "name": "[concat('default/', variables('segContainerName'))]",
+                    "type": "blobServices/containers",
+                    "apiVersion": "2018-07-01",
+                    "dependsOn": [
+                        "[variables('storageAccountName')]"
+                    ]
+                },
+                {
+                    "name": "[concat('default/', variables('logsContainerName'))]",
+                    "type": "blobServices/containers",
+                    "apiVersion": "2018-07-01",
+                    "dependsOn": [
+                        "[variables('storageAccountName')]"
                     ]
                 }                
             ]
