@@ -181,6 +181,7 @@
                 "[concat('Microsoft.Network/networkInterfaces/', variables('networkInterfaceName'))]"
             ],
             "properties": {
+                "allowClaim": true,
                 "hardwareProfile": {
                     "vmSize": "[variables('virtualMachineSize')]"
                 },
