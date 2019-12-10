@@ -47,7 +47,7 @@
         "virtualMachineName":"[toLower(concat(variables('resourceNamePrefix'), '-', take(uniqueString(resourceGroup().id), 6), '-virtualMachineName'))]",
         "virtualMachineRG":"[toLower(concat(variables('resourceNamePrefix'), '-', take(uniqueString(resourceGroup().id), 6), '-virtualMachineRG'))]",
         "virtualMachineSize":"D2s_v3",
-        "osDiskType":"Premium SSD",
+        "osDiskType":"HDD",
         "nsgId": "[resourceId(resourceGroup().name, 'Microsoft.Network/networkSecurityGroups', variables('networkSecurityGroupName'))]",
         "vnetId": "[resourceId(resourceGroup().name,'Microsoft.Network/virtualNetworks', variables('virtualNetworkName'))]",
         "subnetRef": "[concat(variables('vnetId'), '/subnets/', variables('subnetName'))]"
