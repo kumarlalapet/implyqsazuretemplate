@@ -2,6 +2,12 @@
     "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
     "contentVersion": "1.0.0.0",
     "parameters": {          
+        "Trainee Id": {
+            "type": "string",
+            "metadata": {
+                "description": "Enter Trainee Id (e.g. trainee01)"
+            }
+        },        
         "Database Administrator Login": {
             "type": "string",
             "metadata": {
@@ -45,24 +51,24 @@
     "variables": {
         "location": "westus2",
         "enableDdosProtection":"false",
-        "resourceNamePrefix": "[parameters('Environment name')]",
-        "networkInterfaceName":"[toLower(concat(variables('resourceNamePrefix'), '-', take(uniqueString(resourceGroup().id), 6), '-nwinterface'))]",
-        "networkSecurityGroupName":"[toLower(concat(variables('resourceNamePrefix'), '-', take(uniqueString(resourceGroup().id), 6), '-nsg'))]",
-        "networkSecurityGroupRules":"[toLower(concat(variables('resourceNamePrefix'), '-', take(uniqueString(resourceGroup().id), 6), '-nsgrules'))]",
+        "resourceNamePrefix": "[parameters('Trainee Id')]",
+        "networkInterfaceName":"[toLower(concat(variables('resourceNamePrefix'),  '-nwinterface'))]",
+        "networkSecurityGroupName":"[toLower(concat(variables('resourceNamePrefix'),  '-nsg'))]",
+        "networkSecurityGroupRules":"[toLower(concat(variables('resourceNamePrefix'),  '-nsgrules'))]",
         "subnetName":"mysubnet",
-        "virtualNetworkName":"[toLower(concat(variables('resourceNamePrefix'), '-', take(uniqueString(resourceGroup().id), 6), '-vnet'))]",
-        "publicIpAddressName":"[toLower(concat(variables('resourceNamePrefix'), '-', take(uniqueString(resourceGroup().id), 6), '-pubip'))]",
+        "virtualNetworkName":"[toLower(concat(variables('resourceNamePrefix'),  '-vnet'))]",
+        "publicIpAddressName":"[toLower(concat(variables('resourceNamePrefix'),  '-pubip'))]",
         "publicIpAddressType":"Dynamic",
         "publicIpAddressSku":"Basic",
-        "virtualMachineName":"[toLower(concat(variables('resourceNamePrefix'), '-', take(uniqueString(resourceGroup().id), 6), '-vm'))]",
-        "virtualMachineRG":"[toLower(concat(variables('resourceNamePrefix'), '-', take(uniqueString(resourceGroup().id), 6), '-vmrg'))]",
+        "virtualMachineName":"[toLower(concat(variables('resourceNamePrefix'),  '-vm'))]",
+        "virtualMachineRG":"[toLower(concat(variables('resourceNamePrefix'),  '-vmrg'))]",
         "virtualMachineSize":"Standard_D2s_v3",
         "osDiskType":"StandardSSD_LRS",
         "nsgId": "[resourceId(resourceGroup().name, 'Microsoft.Network/networkSecurityGroups', variables('networkSecurityGroupName'))]",
         "vnetId": "[resourceId(resourceGroup().name,'Microsoft.Network/virtualNetworks', variables('virtualNetworkName'))]",
         "subnetRef": "[concat(variables('vnetId'), '/subnets/', variables('subnetName'))]",
 
-        "serverName": "[toLower(concat(variables('resourceNamePrefix'), '-', take(uniqueString(resourceGroup().id), 6), '-db'))]",
+        "serverName": "[toLower(concat(variables('resourceNamePrefix'),  '-db'))]",
         "databaseVersion": "5.7",
         "databaseDTU": 2,
         "databaseSkuName": "GP_Gen5_2",
@@ -71,7 +77,7 @@
         "databaseSkuFamily": "Gen5",
         "virtualNetworkRuleName": "AllowSubnet",
 
-        "storageAccountName":"[toLower(concat(variables('resourceNamePrefix'), take(uniqueString(resourceGroup().id), 6), 'sgaccount'))]",
+        "storageAccountName":"[toLower(concat(variables('resourceNamePrefix'),  'sgaccount'))]",
         "segContainerName":"segmentcontainer",
         "logsContainerName":"logscontainer"
 
