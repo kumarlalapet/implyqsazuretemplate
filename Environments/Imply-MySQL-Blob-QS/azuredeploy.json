@@ -40,7 +40,28 @@
             "metadata": {
                 "description": "Provide password for admin user (minimum 12 max 72, 1 lower case, 1 upper case, 1 number and 1 special char)"
               }            
-        }
+        },
+
+        "newVMName": {
+            "type": "string",
+            "defaultValue": "trainee6"
+          },
+          "labName": {
+            "type": "string",
+            "defaultValue": "v1-testlab-hackathon"
+          },
+          "size": {
+            "type": "string",
+            "defaultValue": "Standard_DS2_v2"
+          },
+          "userName": {
+            "type": "string",
+            "defaultValue": "trainee6"
+          },
+          "password": {
+            "type": "securestring"
+          }
+                  
     },
     "variables": {
         "location": "westus2",
@@ -73,8 +94,14 @@
 
         "storageAccountName":"[toLower(concat(variables('resourceNamePrefix'), take(uniqueString(resourceGroup().id), 6), 'sgaccount'))]",
         "segContainerName":"segmentcontainer",
-        "logsContainerName":"logscontainer"
+        "logsContainerName":"logscontainer",
 
+
+        "labSubnetName": "[concat(variables('labVirtualNetworkName'), 'Subnet')]",
+        "labVirtualNetworkId": "[resourceId('Microsoft.DevTestLab/labs/virtualnetworks', parameters('labName'), variables('labVirtualNetworkName'))]",
+        "labVirtualNetworkName": "[concat('Dtl', parameters('labName'))]",
+        "vmId": "[resourceId ('Microsoft.DevTestLab/labs/virtualmachines', parameters('labName'), parameters('newVMName'))]",
+        "vmName": "[concat(parameters('labName'), '/', parameters('newVMName'))]"        
 
     },
     "resources": [
@@ -174,12 +201,14 @@
         },
 
 
+
         {
             "apiVersion": "2018-10-15-preview",
             "type": "Microsoft.DevTestLab/labs/virtualmachines",
-            "name": "[variables('virtualMachineName')]",
-            "location": "[variables('location')]",
+            "name": "[variables('vmName')]",
+            "location": "[resourceGroup().location]",
             "properties": {
+              "labVirtualNetworkId": "[variables('labVirtualNetworkId')]",
               "notes": "Ubuntu Server 18.04 LTS",
               "galleryImageReference": {
                 "offer": "UbuntuServer",
@@ -188,17 +217,15 @@
                 "osType": "Linux",
                 "version": "latest"
               },
-              "size": "[variables('virtualMachineSize')]",
-              "userName": "[parameters('VM Admin User Login')]",
-              "password": "[parameters('VM Admin User Password')]",
+              "size": "[parameters('size')]",
+              "userName": "[parameters('userName')]",
+              "password": "[parameters('password')]",
               "isAuthenticationWithSshKey": false,
-              "disallowPublicIpAddress": false,
+              "labSubnetName": "[variables('labSubnetName')]",
+              "disallowPublicIpAddress": true,
               "storageType": "Standard",
               "allowClaim": true,
               "networkInterface": {
-                "virtualNetworkId": "variables('vnetId')",
-                "subnetId": "variables('subnetRef')",
-                "publicIpAddressId": "[resourceId(resourceGroup().name, 'Microsoft.Network/publicIpAddresses', variables('publicIpAddressName'))]",                  
                 "sharedPublicIpAddressConfiguration": {
                   "inboundNatRules": [
                     {
@@ -209,7 +236,7 @@
                 }
               }
             }
-          }, 
+          },
 
 
 
