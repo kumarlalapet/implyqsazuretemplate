@@ -2,6 +2,18 @@
     "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
     "contentVersion": "1.0.0.0",
     "parameters": {          
+        "Database Administrator Login": {
+            "type": "string",
+            "metadata": {
+                "description": "Database administrator login name"
+            }
+        },
+        "Database Administrator Login Password": {
+            "type": "securestring",
+            "metadata": {
+                "description": "Database administrator password"
+            }
+        },        
           "addressPrefix": {
             "type": "string",
             "defaultValue": "172.16.0.0/16",
@@ -48,7 +60,18 @@
         "osDiskType":"StandardSSD_LRS",
         "nsgId": "[resourceId(resourceGroup().name, 'Microsoft.Network/networkSecurityGroups', variables('networkSecurityGroupName'))]",
         "vnetId": "[resourceId(resourceGroup().name,'Microsoft.Network/virtualNetworks', variables('virtualNetworkName'))]",
-        "subnetRef": "[concat(variables('vnetId'), '/subnets/', variables('subnetName'))]"
+        "subnetRef": "[concat(variables('vnetId'), '/subnets/', variables('subnetName'))]",
+
+        "serverName": "[toLower(concat(variables('resourceNamePrefix'), '-', take(uniqueString(resourceGroup().id), 6), '-db'))]",
+        "databaseName": "[concat('db', uniqueString(resourceGroup().id, variables('siteName')))]",
+        "databaseVersion": "5.7",
+        "databaseDTU": 2,
+        "databaseSkuName": "B_Gen5_2",
+        "databaseSkuSizeMB": 51200,
+        "databaseSkuTier": "Basic",
+        "databaseSkuFamily": "Gen5",
+        "virtualNetworkRuleName": "AllowSubnet"
+
     },
     "resources": [
         {
@@ -194,7 +217,43 @@
                     }
                 }
             }
+        },
+
+        {
+            "name": "[variables('serverName')]",
+            "type": "Microsoft.DBforMySQL/servers",
+            "apiVersion": "2017-12-01-preview",
+            "location": "[resourceGroup().location]",
+            "kind": "",
+            "properties": {
+                "version": "[variables('databaseVersion')]",
+                "administratorLogin": "[parameters('Database Administrator Login')]",
+                "administratorLoginPassword": "[parameters('Database Administrator Login Password')]",
+                "storageMB": "[variables('databaseSkuSizeMB')]"
+            },
+            "sku": {
+                "name": "[variables('databaseSkuName')]",
+                "tier": "[variables('databaseSkuTier')]",
+                "capacity": "[variables('databaseDTU')]",
+                "size": "[variables('databaseSkuSizeMB')]",
+                "family": "[variables('databaseSkuFamily')]"
+            },
+            "resources": [
+                {
+                    "name": "[variables('virtualNetworkRuleName')]",
+                    "type": "virtualNetworkRules",
+                    "apiVersion": "2017-12-01",
+                    "properties": {
+                        "virtualNetworkSubnetId": "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('virtualNetworkName'), parameters('subnetName'))]",
+                        "ignoreMissingVnetServiceEndpoint": true
+                    },
+                    "dependsOn": [
+                        "[concat('Microsoft.DBforMySQL/servers/', variables('serverName'))]"
+                    ]
+                }                
+            ]
         }
+
     ],
     "outputs": {
         "adminUsername": {
