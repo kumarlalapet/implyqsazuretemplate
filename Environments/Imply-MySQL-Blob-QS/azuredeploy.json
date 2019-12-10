@@ -172,47 +172,46 @@
                 "name": "[variables('publicIpAddressSku')]"
             }
         },
+
+
         {
+            "apiVersion": "2018-10-15-preview",
+            "type": "Microsoft.DevTestLab/labs/virtualmachines",
             "name": "[variables('virtualMachineName')]",
-            "type": "Microsoft.Compute/virtualMachines",
-            "apiVersion": "2019-07-01",
             "location": "[variables('location')]",
-            "dependsOn": [
-                "[concat('Microsoft.Network/networkInterfaces/', variables('networkInterfaceName'))]"
-            ],
             "properties": {
-                "allowClaim": true,
-                "hardwareProfile": {
-                    "vmSize": "[variables('virtualMachineSize')]"
-                },
-                "storageProfile": {
-                    "osDisk": {
-                        "createOption": "fromImage",
-                        "managedDisk": {
-                            "storageAccountType": "[variables('osDiskType')]"
-                        }
-                    },
-                    "imageReference": {
-                        "publisher": "Canonical",
-                        "offer": "UbuntuServer",
-                        "sku": "18.04-LTS",
-                        "version": "latest"
+              "notes": "Ubuntu Server 18.04 LTS",
+              "galleryImageReference": {
+                "offer": "UbuntuServer",
+                "publisher": "Canonical",
+                "sku": "18.04-LTS",
+                "osType": "Linux",
+                "version": "latest"
+              },
+              "size": "[variables('virtualMachineSize')]",
+              "userName": "[parameters('VM Admin User Login')]",
+              "password": "[parameters('VM Admin User Password')]",
+              "isAuthenticationWithSshKey": false,
+              "disallowPublicIpAddress": false,
+              "storageType": "Standard",
+              "allowClaim": true,
+              "networkInterface": {
+                "virtualNetworkId": "variables('vnetId')",
+                "subnetId": "variables('subnetRef')",
+                "publicIpAddressId": "[resourceId(resourceGroup().name, 'Microsoft.Network/publicIpAddresses', variables('publicIpAddressName'))]",                  
+                "sharedPublicIpAddressConfiguration": {
+                  "inboundNatRules": [
+                    {
+                      "transportProtocol": "tcp",
+                      "backendPort": 22
                     }
-                },
-                "networkProfile": {
-                    "networkInterfaces": [
-                        {
-                            "id": "[resourceId('Microsoft.Network/networkInterfaces', variables('networkInterfaceName'))]"
-                        }
-                    ]
-                },
-                "osProfile": {
-                    "computerName": "[variables('virtualMachineName')]",
-                    "adminUsername": "[parameters('VM Admin User Login')]",
-                    "adminPassword": "[parameters('VM Admin User Password')]"
+                  ]
                 }
+              }
             }
-        },
+          }, 
+
+
 
         {
             "name": "[variables('serverName')]",
