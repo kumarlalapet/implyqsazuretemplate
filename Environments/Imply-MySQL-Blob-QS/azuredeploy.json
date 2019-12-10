@@ -101,8 +101,7 @@
                           "priority": 200,
                           "protocol": "Tcp",
                           "destinationPortRange": "22",
-                          "destinationApplicationSecurityGroups": [
-                          ]
+                          "DestinationAddressPrefix": "*"
                         }
                     }                    
                 ]
