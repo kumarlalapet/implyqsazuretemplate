@@ -71,7 +71,7 @@
         "databaseSkuFamily": "Gen5",
         "virtualNetworkRuleName": "AllowSubnet",
 
-        "storageAccountName":"[toLower(concat(variables('resourceNamePrefix'), '-', take(uniqueString(resourceGroup().id), 6), '-sgaccount'))]",
+        "storageAccountName":"[toLower(concat(variables('resourceNamePrefix'), take(uniqueString(resourceGroup().id), 6), 'sgaccount'))]",
         "segContainerName":"segmentcontainer",
         "logsContainerName":"logscontainer"
 
