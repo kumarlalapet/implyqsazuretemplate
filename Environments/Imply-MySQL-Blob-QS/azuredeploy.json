@@ -4,7 +4,6 @@
     "parameters": {
         "vnetAddressPrefix": {
             "type": "array",
-            "defaultValue": "10.0.0.0/16",
             "metadata": {
               "description": "Address prefix for the virtual network"
             }
