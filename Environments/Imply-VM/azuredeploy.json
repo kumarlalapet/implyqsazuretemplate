@@ -14,12 +14,18 @@
         "virtualNetworkName": {
             "type": "string"
         },
-        "addressPrefixes": {
-            "type": "array"
+
+
+        "addressPrefix": {
+            "type": "string"
         },
-        "subnets": {
-            "type": "array"
+        "subnetAddressPrefix": {
+            "type": "string"
         },
+        "enableDdosProtection": {
+            "type": "bool"
+        },        
+
         "publicIpAddressName": {
             "type": "string"
         },
@@ -91,18 +97,39 @@
                 ]
             }
         },
+
+
         {
+            "apiVersion": "2019-04-01",
             "name": "[parameters('virtualNetworkName')]",
             "type": "Microsoft.Network/virtualNetworks",
-            "apiVersion": "2019-04-01",
             "location": "[parameters('location')]",
             "properties": {
                 "addressSpace": {
-                    "addressPrefixes": "[parameters('addressPrefixes')]"
+                    "addressPrefixes": [
+                        "[parameters('addressPrefix')]"
+                    ]
                 },
-                "subnets": "[parameters('subnets')]"
+                "subnets": [
+                    {
+                        "name": "[parameters('subnetName')]",
+                        "properties": {
+                            "addressPrefix": "[parameters('subnetAddressPrefix')]",
+                            "addressPrefixes": [],
+                            "serviceEndpoints": [
+                                {
+                                    "service": "Microsoft.Sql"
+                                }
+                            ]
+                        }
+                    }
+                ],
+                "enableDdosProtection": "[parameters('enableDdosProtection')]"
             }
         },
+
+
+
         {
             "name": "[parameters('publicIpAddressName')]",
             "type": "Microsoft.Network/publicIpAddresses",
