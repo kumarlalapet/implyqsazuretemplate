@@ -39,6 +39,7 @@
         "networkInterfaceName":"[toLower(concat(variables('resourceNamePrefix'), '-', take(uniqueString(resourceGroup().id), 6), '-networkInterfaceName'))]",
         "networkSecurityGroupName":"[toLower(concat(variables('resourceNamePrefix'), '-', take(uniqueString(resourceGroup().id), 6), '-networkSecurityGroupName'))]",
         "networkSecurityGroupRules":"[toLower(concat(variables('resourceNamePrefix'), '-', take(uniqueString(resourceGroup().id), 6), '-networkSecurityGroupRules'))]",
+        "networkSecurityGroupId": "[resourceId('Microsoft.Network/applicationSecurityGroups',variables('networkSecurityGroupName'))]",
         "subnetName":"mysubnet",
         "virtualNetworkName":"[toLower(concat(variables('resourceNamePrefix'), '-', take(uniqueString(resourceGroup().id), 6), '-virtualNetworkName'))]",
         "publicIpAddressName":"[toLower(concat(variables('resourceNamePrefix'), '-', take(uniqueString(resourceGroup().id), 6), '-publicIpAddressName'))]",
@@ -89,7 +90,26 @@
             "apiVersion": "2019-02-01",
             "location": "[variables('location')]",
             "properties": {
-                "securityRules": "[variables('networkSecurityGroupRules')]"
+                "securityRules": [
+                    {
+                        "name": "AllowSshAll",
+                        "properties": {
+                          "description": "Allow SSH traffic",
+                          "sourceAddressPrefix": "*",
+                          "sourcePortRange": "*",
+                          "direction": "Inbound",
+                          "access": "Allow",
+                          "priority": 200,
+                          "protocol": "Tcp",
+                          "destinationPortRange": "22",
+                          "destinationApplicationSecurityGroups": [
+                            {
+                              "id": "[variables('networkSecurityGroupId')]"
+                            }
+                          ]
+                        }
+                    }                    
+                ]
             }
         },
 
