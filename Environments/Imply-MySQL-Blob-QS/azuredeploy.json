@@ -29,16 +29,16 @@
             }            
         },
 
-        "adminUsername": {
+        "VM Admin User Login": {
             "type": "string",
             "metadata": {
                 "description": "The administrator username for the VM"
               }            
         },
-        "adminSSHPublicKey": {
+        "VM Admin User Password": {
             "type": "secureString",
             "metadata": {
-                "description": "Provide an RSA public key in the single-line format (starting with \"ssh-rsa\"). You can generate SSH keys using ssh-keygen on Linux and OS X, or PuTTYGen on Windows."
+                "description": "Provide password for admin user (minimum 12 max 72, 1 lower case, 1 upper case, 1 number and 1 special char)"
               }            
         }
     },
@@ -207,18 +207,8 @@
                 },
                 "osProfile": {
                     "computerName": "[variables('virtualMachineName')]",
-                    "adminUsername": "[parameters('adminUsername')]",
-                    "linuxConfiguration": {
-                        "disablePasswordAuthentication": true,
-                        "ssh": {
-                            "publicKeys": [
-                                {
-                                    "path": "[concat('/home/', parameters('adminUsername'), '/.ssh/authorized_keys')]",
-                                    "keyData": "[parameters('adminSSHPublicKey')]"
-                                }
-                            ]
-                        }
-                    }
+                    "adminUsername": "[parameters('VM Admin User Login')]",
+                    "adminPassword": "[parameters('VM Admin User Password')]"
                 }
             }
         },
@@ -297,7 +287,7 @@
     "outputs": {
         "adminUsername": {
             "type": "string",
-            "value": "[parameters('adminUsername')]"
+            "value": "[parameters('VM Admin User Login')]"
         }
     }
 }
