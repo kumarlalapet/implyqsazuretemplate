@@ -65,9 +65,9 @@
         "serverName": "[toLower(concat(variables('resourceNamePrefix'), '-', take(uniqueString(resourceGroup().id), 6), '-db'))]",
         "databaseVersion": "5.7",
         "databaseDTU": 2,
-        "databaseSkuName": "G_Gen5_2",
+        "databaseSkuName": "GP_Gen5_2",
         "databaseSkuSizeMB": 51200,
-        "databaseSkuTier": "Basic",
+        "databaseSkuTier": "GeneralPurpose",
         "databaseSkuFamily": "Gen5",
         "virtualNetworkRuleName": "AllowSubnet"
 
