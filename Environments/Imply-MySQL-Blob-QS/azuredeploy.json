@@ -45,7 +45,7 @@
     "variables": {
         "location": "westus2",
         "enableDdosProtection":"false",
-        "resourceNamePrefix": "[take(uniqueString(resourceGroup().id), 3)]",
+        "resourceNamePrefix": "[parameters('Environment name')]",
         "networkInterfaceName":"[toLower(concat(variables('resourceNamePrefix'), '-', take(uniqueString(resourceGroup().id), 6), '-nwinterface'))]",
         "networkSecurityGroupName":"[toLower(concat(variables('resourceNamePrefix'), '-', take(uniqueString(resourceGroup().id), 6), '-nsg'))]",
         "networkSecurityGroupRules":"[toLower(concat(variables('resourceNamePrefix'), '-', take(uniqueString(resourceGroup().id), 6), '-nsgrules'))]",
