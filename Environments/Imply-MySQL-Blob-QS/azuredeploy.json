@@ -39,7 +39,6 @@
         "networkInterfaceName":"[toLower(concat(variables('resourceNamePrefix'), '-', take(uniqueString(resourceGroup().id), 6), '-networkInterfaceName'))]",
         "networkSecurityGroupName":"[toLower(concat(variables('resourceNamePrefix'), '-', take(uniqueString(resourceGroup().id), 6), '-networkSecurityGroupName'))]",
         "networkSecurityGroupRules":"[toLower(concat(variables('resourceNamePrefix'), '-', take(uniqueString(resourceGroup().id), 6), '-networkSecurityGroupRules'))]",
-        "networkSecurityGroupId": "[resourceId('Microsoft.Network/applicationSecurityGroups',variables('networkSecurityGroupName'))]",
         "subnetName":"mysubnet",
         "virtualNetworkName":"[toLower(concat(variables('resourceNamePrefix'), '-', take(uniqueString(resourceGroup().id), 6), '-virtualNetworkName'))]",
         "publicIpAddressName":"[toLower(concat(variables('resourceNamePrefix'), '-', take(uniqueString(resourceGroup().id), 6), '-publicIpAddressName'))]",
@@ -104,7 +103,7 @@
                           "destinationPortRange": "22",
                           "destinationApplicationSecurityGroups": [
                             {
-                              "id": "[variables('networkSecurityGroupId')]"
+                              "id": "[variables('nsgId')]"
                             }
                           ]
                         }
