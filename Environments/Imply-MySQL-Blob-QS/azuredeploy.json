@@ -2,19 +2,23 @@
     "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
     "contentVersion": "1.0.0.0",
     "parameters": {
-        "vnetAddressPrefix": {
-            "type": "array",
-            "metadata": {
-              "description": "Address prefix for the virtual network"
-            }
-          },     
-          "subnet1Prefix": {
+         
+          
+          "addressPrefix": {
             "type": "string",
-            "defaultValue": "10.0.1.0/24",
+            "defaultValue": "172.16.0.0/16",
+            "metadata": {
+                "description": "Address prefix for the virtual network"
+              }            
+        },
+        "subnetAddressPrefix": {
+            "type": "string",
+            "defaultValue": "172.16.1.0/24",
             "metadata": {
               "description": "Address prefix for subnet"
-            }
-          },             
+            }            
+        },
+
         "adminUsername": {
             "type": "string",
             "metadata": {
@@ -30,6 +34,7 @@
     },
     "variables": {
         "location": "westus2",
+        "enableDdosProtection":"false",
         "resourceNamePrefix": "[take(uniqueString(resourceGroup().id), 3)]",
         "networkInterfaceName":"[toLower(concat(variables('resourceNamePrefix'), '-', take(uniqueString(resourceGroup().id), 6), '-networkInterfaceName'))]",
         "networkSecurityGroupName":"[toLower(concat(variables('resourceNamePrefix'), '-', take(uniqueString(resourceGroup().id), 6), '-networkSecurityGroupName'))]",
@@ -87,30 +92,38 @@
                 "securityRules": "[variables('networkSecurityGroupRules')]"
             }
         },
+
+
         {
+            "apiVersion": "2019-04-01",
             "name": "[variables('virtualNetworkName')]",
             "type": "Microsoft.Network/virtualNetworks",
-            "apiVersion": "2019-04-01",
             "location": "[variables('location')]",
             "properties": {
                 "addressSpace": {
-                    "addressPrefixes": "[parameters('vnetAddressPrefix')]"
+                    "addressPrefixes": [
+                        "[parameters('addressPrefix')]"
+                    ]
                 },
-                "subnets" : [
+                "subnets": [
                     {
-                      "name": "subnet1",
-                      "properties": {
-                        "addressPrefix": "[parameters('subnet1Prefix')]",
-                        "serviceEndpoints": [
-                          {
-                            "service": "Microsoft.Sql"
-                          }
-                        ]
-                      }
+                        "name": "[variables('subnetName')]",
+                        "properties": {
+                            "addressPrefix": "[parameters('subnetAddressPrefix')]",
+                            "addressPrefixes": [],
+                            "serviceEndpoints": [
+                                {
+                                    "service": "Microsoft.Sql"
+                                }
+                            ]
+                        }
                     }
-                ]
+                ],
+                "enableDdosProtection": "[variables('enableDdosProtection')]"
             }
         },
+
+
         {
             "name": "[variables('publicIpAddressName')]",
             "type": "Microsoft.Network/publicIpAddresses",
