@@ -102,9 +102,6 @@
                           "protocol": "Tcp",
                           "destinationPortRange": "22",
                           "destinationApplicationSecurityGroups": [
-                            {
-                              "id": "[variables('nsgId')]"
-                            }
                           ]
                         }
                     }                    
